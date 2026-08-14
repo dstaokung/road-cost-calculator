@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตารางราคากลางงานก่อสร้างทาง (ว 475 / ว 477)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1e4d8c;
+    --blue-dark:#123765;
+    --blue-light:#eaf1fb;
+    --border:#c7d5e8;
+    --gray:#5b6472;
+    --bg:#f4f6f9;
+    --amber:#b8860b;
+  }
+  *{box-sizing:border-box;}
+  html{
+    font-size:16pt;
+  }
+  body{
+    margin:0;
+    font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai",Tahoma,sans-serif;
+    background:var(--bg);
+    color:#1c1f26;
+    line-height:1.5;
+  }
+  header.topbar{
+    background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+    color:#fff;
+    padding:22px 24px;
+  }
+  header.topbar h1{
+    margin:0 0 4px 0;
+    font-size:1.5rem;
+  }
+  header.topbar p{
+    margin:0;
+    opacity:.85;
+    font-size:.92rem;
+  }
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+  .tabbar{
+    display:flex;
+    gap:8px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    appearance:none;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--blue-dark);
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:.98rem;
+    font-weight:600;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .tab-btn.active{
+    background:var(--blue);
+    border-color:var(--blue);
+    color:#fff;
+  }
+  .tab-btn:not(.active):hover{
+    background:var(--blue-light);
+  }
+  .layout{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+  .layout .left-col{
+    position:sticky;
+    top:20px;
+  }
+  @media (max-width:900px){
+    .layout{ grid-template-columns:1fr; }
+    .layout .left-col{ position:static; }
+  }
+  .card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(20,40,80,.06);
+  }
+  .card h2{
+    margin-top:0;
+    font-size:1.1rem;
+    color:var(--blue-dark);
+    border-bottom:2px solid var(--blue-light);
+    padding-bottom:8px;
+  }
+  .control-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    align-items:flex-end;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field label{
+    font-size:.88rem;
+    font-weight:600;
+    color:var(--gray);
+  }
+  .field input[type=number], .field select{
+    font-size:1.05rem;
+    padding:9px 12px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    width:100%;
+    max-width:100%;
+    font-family:inherit;
+  }
+  .field input[type=number]:focus, .field select:focus{
+    outline:2px solid var(--blue);
+    outline-offset:1px;
+  }
+  .result-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--blue-light);
+    border:1px solid var(--border);
+    color:var(--blue-dark);
+    padding:9px 16px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:1.02rem;
+  }
+  .result-badge.warn{
+    background:#fdf2e0;
+    border-color:#eccf94;
+    color:var(--amber);
+  }
+  .btn{
+    appearance:none;
+    border:1px solid var(--blue);
+    background:var(--blue);
+    color:#fff;
+    padding:9px 18px;
+    border-radius:6px;
+    font-size:.95rem;
+    font-weight:600;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn:hover{ background:var(--blue-dark); }
+  .btn.secondary{
+    background:#fff;
+    color:var(--blue-dark);
+  }
+  .btn.secondary:hover{ background:var(--blue-light); }
+  .btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  table.dep-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.92rem;
+  }
+  table.dep-table caption{
+    caption-side:top;
+    text-align:center;
+    padding-bottom:8px;
+  }
+  table.dep-table th, table.dep-table td{
+    border:1px solid var(--border);
+    padding:5px 8px;
+    text-align:center;
+  }
+  table.dep-table thead th{
+    background:var(--blue);
+    color:#fff;
+    font-weight:600;
+  }
+  table.dep-table td.name-cell, table.dep-table th.name-cell{
+    text-align:left;
+  }
+  table.dep-table tr.section-row td{
+    background:var(--blue-light);
+    font-weight:700;
+    text-align:left;
+    color:var(--blue-dark);
+  }
+  table.dep-table tr.leaf-row td.num{
+    font-variant-numeric:tabular-nums;
+  }
+  table.dep-table tr:nth-child(even).leaf-row{
+    background:#fafbfd;
+  }
+  .doc-title-block{
+    text-align:center;
+    margin-bottom:10px;
+  }
+  .doc-title-block .t1{
+    font-weight:700;
+    font-size:1.1rem;
+  }
+  .doc-title-block .t2{
+    color:var(--gray);
+  }
+  .foot-note{
+    margin-top:10px;
+    font-size:.78rem;
+    color:var(--gray);
+    text-align:right;
+  }
+  .browse-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .hint{
+    font-size:.85rem;
+    color:var(--gray);
+  }
+  .search-box{
+    width:100%;
+    padding:9px 12px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    font-size:.95rem;
+    font-family:inherit;
+    margin-bottom:12px;
+  }
+  figure.print-page{
+    margin:0 0 18px 0;
+  }
+  figure.print-page img{
+    max-width:100%;
+    border:1px solid var(--border);
+    border-radius:6px;
+    display:block;
+    margin:0 auto;
+  }
+  figure.print-page figcaption{
+    text-align:center;
+    font-size:.82rem;
+    color:var(--gray);
+    margin-top:6px;
+  }
+  .print-only{
+    display:none;
+  }
+  .ocr-disclaimer{
+    background:#fdf2e0;
+    border:1px solid #eccf94;
+    color:#7a5a05;
+    padding:10px 14px;
+    border-radius:8px;
+    font-size:.88rem;
+    margin-bottom:12px;
+  }
+  #ocrResult .ocr-scroll{
+    max-height:500px;
+    overflow-y:auto;
+    border:1px solid var(--border);
+    border-radius:6px;
+  }
+  #ocrResult .ocr-scroll table.dep-table{
+    margin:0;
+  }
+  #ocrResult .ocr-scroll table.dep-table thead th{
+    position:sticky;
+    top:0;
+    z-index:1;
+  }
+
+  /* ---------- PRINT ---------- */
+  @media print{
+    header.topbar, .no-print{ display:none !important; }
+    body{ background:#fff; }
+    .wrap{ max-width:none; padding:0; margin:0; }
+    .card{
+      box-shadow:none;
+      border:none;
+      border-radius:0;
+      padding:0;
+      margin:0;
+    }
+    #printAreaRoad, #printAreaTransport{ display:none; }
+    body.print-road #printAreaRoad{ display:block; }
+    body.print-transport #printAreaTransport{ display:block; }
+    body.print-both #printAreaRoad, body.print-both #printAreaTransport{ display:block; }
+    #printAreaRoad > figure.print-page, #printAreaTransport > figure.print-page{
+      margin:0;
+      page-break-after:always;
+    }
+    #printAreaRoad > figure.print-page.last-in-job,
+    #printAreaTransport > figure.print-page.last-in-job{
+      page-break-after:auto;
+    }
+    #printAreaRoad > figure.print-page img, #printAreaTransport > figure.print-page img{ border:none; border-radius:0; width:100%; }
+    table.dep-table{ font-size:11px; }
+    table.dep-table thead th{ background:#dbe6f5 !important; color:#000 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    tr.section-row td{ background:#eef3fa !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <h1 id="pageTitle">ตารางค่าดำเนินการและค่าเสื่อมราคา</h1>
+  <p id="pageSubtitle">งานก่อสร้างทาง สะพาน และท่อเหลี่ยม — อ้างอิงหนังสือกรมบัญชีกลาง ด่วนที่สุด ที่ กค 0433.2/ว 475 ลงวันที่ 26 มิถุนายน 2569</p>
+</header>
+
+<div class="wrap">
+
+  <div class="tabbar no-print">
+    <button class="tab-btn active" id="tabBtnRoad" data-tab="road">ค่าดำเนินการและค่าเสื่อมราคา (ว 475)</button>
+    <button class="tab-btn" id="tabBtnTransport" data-tab="transport">ค่าขนส่งวัสดุก่อสร้าง (ว 477)</button>
+  </div>
+
+  <div class="layout">
+
+    <!-- ===== INPUT / RESULT (left sidebar, shared oil price for both tabs) ===== -->
+    <div class="left-col">
+      <section class="card no-print">
+        <h2 id="searchCardTitle">ค้นหาตารางจากราคาน้ำมันดีเซล</h2>
+        <div class="control-row">
+          <div class="field">
+            <label for="oilPrice">ราคาน้ำมันดีเซล ที่อำเภอเมือง (บาท/ลิตร)</label>
+            <input type="number" id="oilPrice" step="0.01" min="0" placeholder="เช่น 27.45">
+          </div>
+          <div class="field" id="vehicleField">
+            <label for="vehicleSelect">ชนิดของรถบรรทุก (สำหรับเอกสารค่าขนส่ง)</label>
+            <select id="vehicleSelect">
+              <option value="0">รถบรรทุก 6 ล้อ</option>
+              <option value="1">รถบรรทุก 10 ล้อ</option>
+              <option value="2">รถบรรทุก 10 ล้อ และรถลากพ่วง</option>
+            </select>
+          </div>
+          <div id="matchBadge" class="result-badge">กรอกราคาน้ำมันเพื่อค้นหาตาราง</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btnPrintRoad">พิมพ์เอกสาร ค่าดำเนินการและค่าเสื่อมราคา</button>
+          <button class="btn" id="btnPrintTransport">พิมพ์เอกสาร ค่าขนส่ง</button>
+          <button class="btn secondary" id="btnPrintBoth">พิมพ์ทั้ง 2 อย่าง</button>
+        </div>
+        <p class="hint" id="searchHint">ระบบจะเลือกช่วงราคาน้ำมัน (step ละ 1.00 บาท) ที่ครอบคลุมราคาที่กรอก แล้วโหลดหน้าเอกสารจริง (ไฟล์ต้นฉบับ) ของทั้ง 2 เอกสารไว้ให้พร้อมพิมพ์ — เลือกพิมพ์ทีละเอกสาร หรือพิมพ์รวมกันก็ได้ ไม่ขึ้นกับแท็บที่กำลังเปิดอยู่</p>
+      </section>
+    </div>
+
+    <!-- ===== RIGHT PANEL: swaps content per tab ===== -->
+    <div class="right-col">
+
+      <!-- Tab 1: browsable HTML data view (from data.js), for convenient viewing only — not for printing -->
+      <section class="card no-print" id="roadBrowsePanel">
+        <h2>เรียกดูค่าต่างๆ ทั้งหมด (45 ช่วงราคาน้ำมัน)</h2>
+        <div class="browse-row">
+          <div class="field">
+            <label for="rangeSelect">เลือกช่วงราคาน้ำมันโดยตรง</label>
+            <select id="rangeSelect"></select>
+          </div>
+          <div class="field">
+            <label for="searchBox">ค้นหารายการงาน</label>
+            <input type="text" id="searchBox" class="search-box" style="min-width:280px;margin:0;" placeholder="พิมพ์ชื่องาน เช่น หินคลุก, คอนกรีต, Milling">
+          </div>
+        </div>
+        <p class="hint">เลือกช่วงราคาเพื่อดูตารางแบบเต็มโดยไม่ต้องกรอกราคาน้ำมัน หรือพิมพ์คำค้นเพื่อไฮไลต์รายการที่ต้องการ (ตารางนี้สร้างจากข้อมูลในเอกสาร สำหรับดูค่าสะดวกๆ เท่านั้น ไม่ใช้พิมพ์)</p>
+        <div class="doc-title-block">
+          <div class="t1">ตารางค่าดำเนินการและค่าเสื่อมราคา</div>
+          <div class="t2">ราคาน้ำมันดีเซล ที่ อำเภอเมือง <span id="browseRangeLabel">-</span> บาท/ลิตร</div>
+        </div>
+        <div id="tableHost"></div>
+      </section>
+
+      <!-- Tab 2: reference info for transport cost document (numbers are 280 scanned pages — use print/preview via the real pages rather than a retyped table) -->
+      <section class="card no-print" id="transportInfoPanel" hidden>
+        <h2>เกี่ยวกับตารางค่าขนส่งวัสดุก่อสร้าง</h2>
+        <p class="hint">เอกสารนี้เป็นตารางสำเร็จรูปตามระดับราคาน้ำมันดีเซล (25.00–69.99 บาท/ลิตร ทีละ 1.00 บาท) แยกเป็น 3 ชุดตามชนิดรถบรรทุก แต่ละช่วงราคาแสดงอัตราค่าขนส่ง (บาท/ตัน และ บาท/ลบ.ม.) ตามระยะทางขนส่ง 1–200 กม. เป็นรายกิโลเมตร และอัตราต่อกิโลเมตรสำหรับระยะทาง 201–1,000 กม. ใช้ได้กับการขนส่งบนพื้นผิวทางราบปกติ (ทางราบผิวลาดยางหรือผิวคอนกรีต) เท่านั้น กรอกราคาน้ำมันและเลือกชนิดรถทางด้านซ้ายก่อน แล้วกดพิมพ์เพื่อดูตารางอัตราเต็มจากเอกสารต้นฉบับ หรือกดปุ่มด้านล่างเพื่อถอดตัวเลขมาดูบนหน้าจอ</p>
+
+        <div class="btn-row" style="margin:4px 0 6px">
+          <button class="btn secondary" id="btnOcr">ถอดตัวเลขจากหน้าที่เลือกด้วย OCR</button>
+          <span id="ocrStatus" class="hint"></span>
+        </div>
+        <div id="ocrResult"></div>
+
+        <div class="doc-title-block">
+          <div class="t1">สูตรคำนวณระยะทางและค่าขนส่งวัสดุก่อสร้าง</div>
+        </div>
+        <p class="hint">
+          เมื่อขนส่งบนทางที่ไม่ใช่ทางราบปกติ (ทางลูกรัง ทางลูกเนิน หรือทางภูเขา) ให้แปลงระยะทางแต่ละช่วงเป็น "ระยะทางเทียบเท่าทางราบ" โดยคูณด้วยตัวแปรสภาพผิวทางในตารางด้านล่าง รวมเป็นระยะทางรวม D แล้วหาตัวแปรค่าขนส่ง F = D / L (L คือระยะทางจริงจากแหล่งวัสดุถึงหน้างาน) จากนั้นนำ F คูณกับอัตราค่าขนส่งที่ระยะทาง L กม. จากตารางค่าขนส่งของรถแต่ละชนิด จะได้ค่าขนส่งที่ใช้จริง (บาท/ตัน หรือ บาท/ลบ.ม.)
+        </p>
+        <table class="dep-table">
+          <thead>
+            <tr><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ชนิดรถบรรทุก</th><th colspan="3">ผิวทางลาดยาง / คอนกรีต</th><th colspan="3">ผิวทางลูกรัง</th></tr>
+            <tr><th>ที่ราบ</th><th>ลูกเนิน</th><th>ภูเขา</th><th>ที่ราบ</th><th>ลูกเนิน</th><th>ภูเขา</th></tr>
+          </thead>
+          <tbody>
+            <tr class="leaf-row"><td>1</td><td class="name-cell">รถบรรทุก 6 ล้อ</td><td class="num">1.00</td><td class="num">2.12</td><td class="num">2.56</td><td class="num">1.24</td><td class="num">2.36</td><td class="num">2.80</td></tr>
+            <tr class="leaf-row"><td>2</td><td class="name-cell">รถบรรทุก 10 ล้อ</td><td class="num">1.00</td><td class="num">1.95</td><td class="num">2.52</td><td class="num">1.23</td><td class="num">2.18</td><td class="num">2.75</td></tr>
+            <tr class="leaf-row"><td>3</td><td class="name-cell">รถบรรทุก 10 ล้อ และรถลากพ่วง</td><td class="num">1.00</td><td class="num">2.13</td><td class="num">–</td><td class="num">1.20</td><td class="num">2.33</td><td class="num">–</td></tr>
+          </tbody>
+        </table>
+        <p class="hint" style="margin-top:10px">หมายเหตุ: ทางลูกเนิน หมายถึงทางที่มีความลาดชัน 4–8% ทางภูเขา หมายถึงทางที่มีความลาดชันมากกว่า 8% และกรณีระยะทางขนส่งน้อยกว่า 1 กิโลเมตร ให้ใช้อัตราค่าขนส่งของระยะทาง 1 กิโลเมตร</p>
+
+        <div class="doc-title-block" style="margin-top:18px">
+          <div class="t1">แนวทางการเลือกใช้รถบรรทุก</div>
+        </div>
+        <p class="hint"><strong>รถบรรทุก 10 ล้อ</strong> — ไม่ต้องทำ Stock pile, ปริมาณจราจรระดับปกติถึงหนาแน่น, ภูมิประเทศที่ราบและทางภูเขา ผิวทางลาดยางและ/หรือลูกรัง</p>
+        <p class="hint"><strong>รถบรรทุก 10 ล้อและรถลากพ่วง</strong> — ใช้ขนส่งวัสดุที่เป็นถังใหญ่ (Bulk) เช่น เหล็ก ยางแอสฟัลท์ ปูนซีเมนต์ผง, มีการทำ Stock pile ไว้ก่อน, ภูมิประเทศที่ราบและทางลูกเนิน (ไม่ใช้กับทางภูเขา)</p>
+        <p class="hint"><strong>รถบรรทุก 6 ล้อ</strong> — ขนส่งบนทางภูเขาหรือทางลาดชันมาก, ในเขตชุมชนที่จราจรหนาแน่น (เช่น กรุงเทพฯ เขตเทศบาลเมือง), งานขนาดเล็กหรือระยะเวลาดำเนินการสั้น, พื้นที่ก่อสร้างคับแคบ</p>
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- ===== REAL DOCUMENT PAGES (print target only — hidden on screen, shown when printing) ===== -->
+  <section class="card print-only" id="printAreaRoad">
+    <figure class="print-page">
+      <img id="imgCoverRoad" src="cover-page.jpg" alt="หน้าแรกของเอกสาร ว 475">
+    </figure>
+    <figure class="print-page">
+      <img id="imgUsageRoad1" src="" alt="หน้าที่ใช้งาน ว 475 (1/2)">
+    </figure>
+    <figure class="print-page">
+      <img id="imgUsageRoad2" src="" alt="หน้าที่ใช้งาน ว 475 (2/2)">
+    </figure>
+  </section>
+
+  <section class="card print-only" id="printAreaTransport">
+    <figure class="print-page">
+      <img id="imgCoverTransport" src="cover-page-477.jpg" alt="หน้าแรกของเอกสาร ว 477">
+    </figure>
+    <figure class="print-page">
+      <img id="imgUsageTransport1" src="" alt="หน้าที่ใช้งาน ว 477 (1/2)">
+    </figure>
+    <figure class="print-page">
+      <img id="imgUsageTransport2" src="" alt="หน้าที่ใช้งาน ว 477 (2/2)">
+    </figure>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="data.js"></script>
+<script>
+(function(){
+  const rows = DEPR_DATA.rows;
+  const prices = DEPR_DATA.prices;
+
+  const oilPriceEl = document.getElementById('oilPrice');
+  const matchBadge = document.getElementById('matchBadge');
+  const browseRangeLabel = document.getElementById('browseRangeLabel');
+  const tableHost = document.getElementById('tableHost');
+  const rangeSelect = document.getElementById('rangeSelect');
+  const searchBox = document.getElementById('searchBox');
+  const imgCoverRoad = document.getElementById('imgCoverRoad');
+  const imgUsageRoad1 = document.getElementById('imgUsageRoad1');
+  const imgUsageRoad2 = document.getElementById('imgUsageRoad2');
+  const imgCoverTransport = document.getElementById('imgCoverTransport');
+  const imgUsageTransport1 = document.getElementById('imgUsageTransport1');
+  const imgUsageTransport2 = document.getElementById('imgUsageTransport2');
+  const btnPrintRoad = document.getElementById('btnPrintRoad');
+  const btnPrintTransport = document.getElementById('btnPrintTransport');
+  const btnPrintBoth = document.getElementById('btnPrintBoth');
+  const vehicleField = document.getElementById('vehicleField');
+  const vehicleSelect = document.getElementById('vehicleSelect');
+  const tabBtnRoad = document.getElementById('tabBtnRoad');
+  const tabBtnTransport = document.getElementById('tabBtnTransport');
+  const roadBrowsePanel = document.getElementById('roadBrowsePanel');
+  const transportInfoPanel = document.getElementById('transportInfoPanel');
+  const pageTitle = document.getElementById('pageTitle');
+  const pageSubtitle = document.getElementById('pageSubtitle');
+  const searchCardTitle = document.getElementById('searchCardTitle');
+  const searchHint = document.getElementById('searchHint');
+
+  let activeTab = 'road';
+
+  const TAB_TEXT = {
+    road: {
+      title: 'ตารางค่าดำเนินการและค่าเสื่อมราคา',
+      subtitle: 'งานก่อสร้างทาง สะพาน และท่อเหลี่ยม — อ้างอิงหนังสือกรมบัญชีกลาง ด่วนที่สุด ที่ กค 0433.2/ว 475 ลงวันที่ 26 มิถุนายน 2569',
+      searchTitle: 'ค้นหาตารางจากราคาน้ำมันดีเซล',
+      hint: 'ระบบจะเลือกช่วงราคาน้ำมัน (step ละ 1.00 บาท) ที่ครอบคลุมราคาที่กรอก แล้วโหลดหน้าเอกสารจริง (ไฟล์ต้นฉบับ) ที่ตรงกันไว้ให้พร้อมพิมพ์'
+    },
+    transport: {
+      title: 'ตารางค่าขนส่งวัสดุก่อสร้าง',
+      subtitle: 'งานก่อสร้างทาง สะพาน ท่อเหลี่ยม และชลประทาน — อ้างอิงหนังสือกรมบัญชีกลาง ด่วนที่สุด ที่ กค 0433.2/ว 477 ลงวันที่ 26 มิถุนายน 2569',
+      searchTitle: 'ค้นหาตารางค่าขนส่งจากราคาน้ำมันดีเซล',
+      hint: 'เลือกชนิดรถบรรทุกและกรอกราคาน้ำมัน ระบบจะเลือกช่วงราคา (step ละ 1.00 บาท) และโหลดหน้าเอกสารจริงของรถชนิดนั้นไว้ให้พร้อมพิมพ์'
+    }
+  };
+
+  // ===== ROAD DOC (ว 475): bracket 0 = 25.00-25.99 -> pages 2 & 3 of the original PDF, bracket 1 -> pages 4 & 5, etc.
+  function roadPageFile(pageNum){
+    return 'pages/p' + String(pageNum).padStart(3,'0') + '.png';
+  }
+  function loadUsagePagesRoad(idx){
+    const p1 = 2 + idx*2, p2 = 3 + idx*2;
+    imgUsageRoad1.src = roadPageFile(p1);
+    imgUsageRoad2.src = roadPageFile(p2);
+  }
+
+  // ===== TRANSPORT DOC (ว 477): 3 vehicle sections, each starting right after its divider page,
+  // then 45 brackets x 2 pages. Divider pages (1-indexed PDF page numbers) per vehicle:
+  const TRANSPORT_DIVIDER_PAGE = [8, 99, 190]; // 6-wheel, 10-wheel, 10-wheel+trailer
+  function transportPageFile(pageNum){
+    return 'pages477/p' + String(pageNum).padStart(3,'0') + '.png';
+  }
+  function loadUsagePagesTransport(idx, vehicleIdx){
+    const base = TRANSPORT_DIVIDER_PAGE[vehicleIdx] + 1;
+    const p1 = base + idx*2, p2 = p1 + 1;
+    imgUsageTransport1.src = transportPageFile(p1);
+    imgUsageTransport2.src = transportPageFile(p2);
+  }
+
+  // populate dropdown
+  prices.forEach((p, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = p.label + ' บาท/ลิตร';
+    rangeSelect.appendChild(opt);
+  });
+
+  function fmt(n){
+    if(n === null || n === undefined) return '';
+    return n.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtCost(n){
+    if(n === null || n === undefined) return '';
+    if(Number.isInteger(n) && n >= 1000) return n.toLocaleString('th-TH');
+    return fmt(n);
+  }
+
+  function findBracketIndex(price){
+    if(price === null || isNaN(price)) return -1;
+    for(let i=0;i<prices.length;i++){
+      if(price >= prices[i].min - 1e-9 && price <= prices[i].max + 1e-9) return i;
+    }
+    return -1;
+  }
+
+  function renderTable(idx){
+    const bracket = prices[idx];
+    browseRangeLabel.textContent = bracket.label;
+    rangeSelect.value = idx;
+
+    let html = '<table class="dep-table"><thead>';
+    html += '<tr><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ลักษณะงาน</th><th rowspan="2">หน่วย</th>';
+    html += '<th rowspan="2">ค่าดำเนินการ<br>บาท/หน่วย</th><th colspan="2">ค่าเสื่อมราคา (บาท)</th><th colspan="2">รวมค่างาน (บาท)</th></tr>';
+    html += '<tr><th>ปกติ</th><th>ฝนชุก</th><th>ปกติ</th><th>ฝนชุก</th></tr></thead><tbody>';
+
+    rows.forEach((r, i) => {
+      const v = bracket.values[i];
+      if(r.header){
+        html += `<tr class="section-row" data-search="${(r.no+' '+r.item).toLowerCase()}"><td colspan="8">${r.no ? r.no+'. ' : ''}${escapeHtml(r.item)}</td></tr>`;
+      } else {
+        html += `<tr class="leaf-row" data-search="${(r.no+' '+r.item).toLowerCase()}">`;
+        html += `<td>${r.no}</td>`;
+        html += `<td class="name-cell">${escapeHtml(r.item)}</td>`;
+        html += `<td>${r.unit}</td>`;
+        html += `<td class="num">${fmtCost(v[0])}</td>`;
+        html += `<td class="num">${fmt(v[1])}</td>`;
+        html += `<td class="num">${fmt(v[2])}</td>`;
+        html += `<td class="num">${fmt(v[3])}</td>`;
+        html += `<td class="num">${fmt(v[4])}</td>`;
+        html += `</tr>`;
+      }
+    });
+    html += '</tbody></table>';
+    tableHost.innerHTML = html;
+    applySearchFilter();
+  }
+
+  function escapeHtml(s){
+    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function updateUsageDisplay(idx){
+    // keep BOTH documents' print pages in sync at all times, regardless of which tab is
+    // showing on screen, so any of the 3 print buttons work no matter which tab is active
+    imgCoverRoad.src = 'cover-page.jpg';
+    loadUsagePagesRoad(idx);
+    imgCoverTransport.src = 'cover-page-477.jpg';
+    loadUsagePagesTransport(idx, parseInt(vehicleSelect.value, 10));
+  }
+
+  function updateFromOilPrice(){
+    const val = parseFloat(oilPriceEl.value);
+    const idx = findBracketIndex(val);
+    if(isNaN(val) || oilPriceEl.value === ''){
+      matchBadge.textContent = 'กรอกราคาน้ำมันเพื่อค้นหาตาราง';
+      matchBadge.classList.remove('warn');
+      return;
+    }
+    if(idx === -1){
+      matchBadge.textContent = `ไม่มีตารางสำหรับราคา ${val.toFixed(2)} บาท/ลิตร (ช่วงที่มีข้อมูล ${prices[0].label} ถึง ${prices[prices.length-1].label})`;
+      matchBadge.classList.add('warn');
+      return;
+    }
+    if(activeTab === 'road'){
+      matchBadge.textContent = `ใช้เอกสารช่วงราคา ${prices[idx].label} บาท/ลิตร`;
+      renderTable(idx);
+    } else {
+      const vehName = vehicleSelect.options[vehicleSelect.selectedIndex].text;
+      matchBadge.textContent = `ใช้เอกสารช่วงราคา ${prices[idx].label} บาท/ลิตร — ${vehName}`;
+    }
+    matchBadge.classList.remove('warn');
+    updateUsageDisplay(idx);
+  }
+
+  function switchTab(tab){
+    activeTab = tab;
+    const t = TAB_TEXT[tab];
+    pageTitle.textContent = t.title;
+    pageSubtitle.textContent = t.subtitle;
+    searchCardTitle.textContent = t.searchTitle;
+    searchHint.textContent = t.hint;
+    tabBtnRoad.classList.toggle('active', tab === 'road');
+    tabBtnTransport.classList.toggle('active', tab === 'transport');
+    roadBrowsePanel.hidden = (tab !== 'road');
+    transportInfoPanel.hidden = (tab !== 'transport');
+    updateFromOilPrice();
+  }
+
+  function applySearchFilter(){
+    const q = searchBox.value.trim().toLowerCase();
+    const trs = tableHost.querySelectorAll('tr[data-search]');
+    trs.forEach(tr => {
+      if(!q){ tr.style.outline=''; tr.style.background=''; return; }
+      if(tr.dataset.search.includes(q)){
+        tr.style.outline = '2px solid #b8860b';
+        tr.style.background = '#fff6e0';
+      } else {
+        tr.style.outline='';
+        tr.style.background='';
+      }
+    });
+  }
+
+  // ===== On-demand OCR: read the numbers off the two currently-loaded transport page images =====
+  // Column x-ranges (value columns only — "ระยะ" distance column is skipped since it's a known,
+  // deterministic 1..200 sequence, not something we need to OCR) calibrated against the rendered
+  // page images (1240x1754px) and checked to work across all 3 vehicle-type layouts.
+  const OCR_GROUPS_X = [[206,458],[568,820],[930,1182]];
+  const btnOcr = document.getElementById('btnOcr');
+  const ocrStatus = document.getElementById('ocrStatus');
+  const ocrResult = document.getElementById('ocrResult');
+  let tessWorker = null;
+
+  async function getTessWorker(){
+    if(tessWorker) return tessWorker;
+    ocrStatus.textContent = 'กำลังโหลดเครื่องมือ OCR (ครั้งแรกอาจใช้เวลาสักครู่)...';
+    tessWorker = await Tesseract.createWorker('eng');
+    await tessWorker.setParameters({
+      tessedit_pageseg_mode: '6',
+      tessedit_char_whitelist: '0123456789.,'
+    });
+    return tessWorker;
+  }
+
+  function ocrNormalizeNum(tok){
+    tok = tok.replace(/,/g,'').replace(/\s/g,'');
+    if(tok.indexOf('.') === -1 && tok.length > 2){
+      tok = tok.slice(0,-2) + '.' + tok.slice(-2);
+    }
+    const n = parseFloat(tok);
+    return isNaN(n) ? null : n;
+  }
+
+  function ocrParseText(text, expectedRows){
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    let rows = lines.map(l => {
+      const toks = l.match(/[0-9,]+\.?[0-9]*/g) || [];
+      const nums = toks.map(ocrNormalizeNum).filter(n => n !== null);
+      return nums.slice(0,2);
+    });
+    while(rows.length < expectedRows) rows.push([]);
+    return rows.slice(0, expectedRows);
+  }
+
+  // crop a region from the given <img>, convert to black/white (removes the faint watermark),
+  // and upscale — all of which noticeably improves OCR accuracy on this document's small print
+  function ocrCropPrep(imgEl, x0, y0, x1, y1, scale){
+    scale = scale || 3;
+    const w = x1 - x0, h = y1 - y0;
+    const canvas = document.createElement('canvas');
+    canvas.width = w * scale;
+    canvas.height = h * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(imgEl, x0, y0, w, h, 0, 0, canvas.width, canvas.height);
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    for(let i = 0; i < d.length; i += 4){
+      const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+      const v = lum < 140 ? 0 : 255;
+      d[i] = d[i+1] = d[i+2] = v;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return canvas;
+  }
+
+  async function ocrPage1(imgEl){
+    const worker = await getTessWorker();
+    const out = [];
+    for(let gi = 0; gi < 3; gi++){
+      ocrStatus.textContent = `กำลังอ่านหน้าที่ 1 จาก 2 (ชุดที่ ${gi+1}/3)...`;
+      const canvas = ocrCropPrep(imgEl, OCR_GROUPS_X[gi][0], 262, OCR_GROUPS_X[gi][1], 1686);
+      const { data: { text } } = await worker.recognize(canvas);
+      const rows = ocrParseText(text, 40);
+      rows.forEach((r, ri) => out.push({ distance: gi*40 + ri + 1, ton: r[0] ?? null, cum: r[1] ?? null }));
+    }
+    return out;
+  }
+
+  async function ocrPage2(imgEl){
+    const worker = await getTessWorker();
+    const out = [];
+    const counts = [27, 27, 26];
+    const ybots = [1216, 1216, 1195];
+    let distStart = 121;
+    for(let gi = 0; gi < 3; gi++){
+      ocrStatus.textContent = `กำลังอ่านหน้าที่ 2 จาก 2 (ชุดที่ ${gi+1}/3)...`;
+      const canvas = ocrCropPrep(imgEl, OCR_GROUPS_X[gi][0], 262, OCR_GROUPS_X[gi][1], ybots[gi]);
+      const { data: { text } } = await worker.recognize(canvas);
+      const rows = ocrParseText(text, counts[gi]);
+      rows.forEach((r, ri) => out.push({ distance: distStart + ri, ton: r[0] ?? null, cum: r[1] ?? null }));
+      distStart += counts[gi];
+    }
+    ocrStatus.textContent = 'กำลังอ่านอัตราต่อกิโลเมตร (201–1,000 กม.)...';
+    try {
+      const footCanvas = ocrCropPrep(imgEl, OCR_GROUPS_X[2][0], 1195, OCR_GROUPS_X[2][1], 1300);
+      const { data: { text: footText } } = await worker.recognize(footCanvas);
+      const footRows = ocrParseText(footText, 1);
+      const foot = footRows[0] || [];
+      out.push({ distance: '201–1,000 (ต่อ กม.)', ton: foot[0] ?? null, cum: foot[1] ?? null, isFooter: true });
+    } catch(e){
+      out.push({ distance: '201–1,000 (ต่อ กม.)', ton: null, cum: null, isFooter: true });
+    }
+    return out;
+  }
+
+  function renderOcrTable(rows){
+    let html = '<div class="ocr-disclaimer">⚠ ตัวเลขด้านล่างถอดด้วย OCR จากภาพเอกสารโดยอัตโนมัติ อาจมีความคลาดเคลื่อนในบางตำแหน่ง (ตัวเลขผิดหลัก หรืออ่านไม่ออก) กรุณาตรวจสอบกับหน้าที่พิมพ์ (หน้าแรก + หน้าที่ใช้งาน) ก่อนนำไปใช้งานจริงเสมอ</div>';
+    html += '<div class="ocr-scroll"><table class="dep-table"><thead><tr><th>ระยะขนส่ง (กม.)</th><th>บาท/ตัน</th><th>บาท/ลบ.ม.</th></tr></thead><tbody>';
+    rows.forEach(r => {
+      const tonTxt = (typeof r.ton === 'number') ? r.ton.toFixed(2) : '—';
+      const cumTxt = (typeof r.cum === 'number') ? r.cum.toFixed(2) : '—';
+      html += `<tr class="leaf-row${r.isFooter ? ' section-row' : ''}"><td>${r.distance}</td><td class="num">${tonTxt}</td><td class="num">${cumTxt}</td></tr>`;
+    });
+    html += '</tbody></table></div>';
+    ocrResult.innerHTML = html;
+  }
+
+  btnOcr.addEventListener('click', async () => {
+    btnOcr.disabled = true;
+    ocrResult.innerHTML = '';
+    try {
+      ocrStatus.textContent = 'เริ่มประมวลผล OCR...';
+      const rows1 = await ocrPage1(imgUsageTransport1);
+      const rows2 = await ocrPage2(imgUsageTransport2);
+      renderOcrTable(rows1.concat(rows2));
+      ocrStatus.textContent = '';
+    } catch(err){
+      const isSecurity = err && (err.name === 'SecurityError' || /tainted|cross-origin/i.test(err.message||''));
+      ocrStatus.textContent = isSecurity
+        ? 'ไม่สามารถอ่านภาพได้ — ฟีเจอร์นี้ใช้ได้เฉพาะเมื่อเปิดผ่านเว็บ (เช่น GitHub Pages) ไม่ใช่การเปิดไฟล์โดยตรง'
+        : 'เกิดข้อผิดพลาดระหว่างอ่านตัวเลข: ' + (err && err.message ? err.message : err);
+    } finally {
+      btnOcr.disabled = false;
+    }
+  });
+
+  oilPriceEl.addEventListener('input', updateFromOilPrice);
+  vehicleSelect.addEventListener('change', updateFromOilPrice);
+  rangeSelect.addEventListener('change', () => renderTable(parseInt(rangeSelect.value,10)));
+  searchBox.addEventListener('input', applySearchFilter);
+
+  // Mark whichever figure is the true last page of a given print job so it doesn't force
+  // a trailing blank page (page-break-after is set to "always" on every figure by default).
+  function preparePrintBreaks(mode){
+    document.querySelectorAll('#printAreaRoad .print-page, #printAreaTransport .print-page')
+      .forEach(f => f.classList.remove('last-in-job'));
+    let lastFig;
+    if(mode === 'road'){
+      lastFig = document.querySelector('#printAreaRoad .print-page:last-child');
+    } else if(mode === 'transport'){
+      lastFig = document.querySelector('#printAreaTransport .print-page:last-child');
+    } else {
+      lastFig = document.querySelector('#printAreaTransport .print-page:last-child');
+    }
+    if(lastFig) lastFig.classList.add('last-in-job');
+  }
+
+  function doPrint(mode){
+    preparePrintBreaks(mode);
+    document.body.className = 'print-' + mode;
+    window.print();
+  }
+  window.addEventListener('afterprint', () => { document.body.className = ''; });
+
+  btnPrintRoad.addEventListener('click', () => doPrint('road'));
+  btnPrintTransport.addEventListener('click', () => doPrint('transport'));
+  btnPrintBoth.addEventListener('click', () => doPrint('both'));
+
+  tabBtnRoad.addEventListener('click', () => switchTab('road'));
+  tabBtnTransport.addEventListener('click', () => switchTab('transport'));
+
+  // initial render: first bracket (25.00 - 25.99) as sensible defaults for both panels
+  renderTable(0);
+  updateUsageDisplay(0);
+})();
+</script>
+
+</body>
+</html>
