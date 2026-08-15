@@ -194,6 +194,13 @@
   #btnPrintBoth{
     flex-basis:100%;
   }
+  .ref-link{
+    font-size:.82rem;
+    color:var(--blue);
+    text-decoration:none;
+    margin-top:-2px;
+  }
+  .ref-link:hover{ text-decoration:underline; }
   .print-list{
     display:flex;
     flex-direction:column;
@@ -387,6 +394,7 @@
           <div class="field">
             <label for="oilPrice">ราคาน้ำมันดีเซล ที่อำเภอเมือง (บาท/ลิตร)</label>
             <input type="number" id="oilPrice" step="0.01" min="0" placeholder="เช่น 27.45">
+            <a class="ref-link" href="https://www.pttor.com/th/oil_price" target="_blank" rel="noopener noreferrer">ตรวจสอบราคาน้ำมัน — Oil Price (OR)</a>
           </div>
           <div class="field" id="vehicleField">
             <label for="vehicleSelect">ชนิดของรถบรรทุก (สำหรับเอกสารค่าขนส่ง)</label>
