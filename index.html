@@ -312,6 +312,53 @@
   .print-only{
     display:none;
   }
+  /* Highlight overlay drawn on top of the real document page images. Band positions come
+     from row-coords.js (measured in pixels off the page images, stored as fractions), so
+     they stay aligned at any print scale since the image is sized to 100% page width. */
+  .page-img-wrap{
+    position:relative;
+    display:block;
+    line-height:0;
+  }
+  .hl-layer{
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    pointer-events:none;
+  }
+  .hl-band{
+    position:absolute;
+    background:rgba(255,215,0,.42);
+    mix-blend-mode:multiply;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  td.hl-col, th.hl-col{
+    width:1%;
+    text-align:center;
+    white-space:nowrap;
+  }
+  .hl-chk{
+    width:15px;
+    height:15px;
+    cursor:pointer;
+    accent-color:var(--amber);
+    vertical-align:middle;
+  }
+  .hl-toolbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:2px 0 10px;
+  }
+  .hl-count{
+    font-size:.85rem;
+    color:var(--gray);
+  }
+  .btn.tiny{
+    padding:5px 12px;
+    font-size:.82rem;
+  }
   .ocr-disclaimer{
     background:#fdf2e0;
     border:1px solid #eccf94;
@@ -363,6 +410,7 @@
       page-break-after:auto;
     }
     #printAreaRoad > figure.print-page img, #printAreaTransport > figure.print-page img, #printAreaDirt > figure.print-page img{ border:none; border-radius:0; width:100%; }
+    .page-img-wrap{ width:100%; }
     table.dep-table{ font-size:11px; }
     table.dep-table thead th{ background:#dbe6f5 !important; color:#000 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     tr.section-row td{ background:#eef3fa !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -409,20 +457,20 @@
         <div class="print-label">พิมพ์เอกสาร</div>
         <div class="print-list">
           <div class="print-item">
-            <input type="checkbox" id="chkRoad" class="print-chk" checked>
+            <input type="checkbox" id="chkRoad" class="print-chk">
             <button class="btn" id="btnPrintRoad">ค่าดำเนินการและค่าเสื่อมราคา</button>
           </div>
           <div class="print-item">
-            <input type="checkbox" id="chkTransport" class="print-chk" checked>
+            <input type="checkbox" id="chkTransport" class="print-chk">
             <button class="btn" id="btnPrintTransport">ค่าขนส่ง</button>
           </div>
           <div class="print-item">
-            <input type="checkbox" id="chkDirt" class="print-chk" checked>
+            <input type="checkbox" id="chkDirt" class="print-chk">
             <button class="btn" id="btnPrintDirt">อัตราราคางานดิน</button>
           </div>
         </div>
         <div class="btn-row">
-          <button class="btn secondary" id="btnPrintBoth">พิมพ์เอกสารที่เลือก (3 อย่าง)</button>
+          <button class="btn secondary" id="btnPrintBoth" disabled>ยังไม่ได้เลือกเอกสาร</button>
         </div>
         <p class="hint" id="searchHint">ระบบจะเลือกช่วงราคาน้ำมัน (step ละ 1.00 บาท) ที่ครอบคลุมราคาที่กรอก แล้วโหลดหน้าเอกสารจริง (ไฟล์ต้นฉบับ) ของทั้ง 3 เอกสารไว้ให้พร้อมพิมพ์ — กดปุ่มชื่อเอกสารเพื่อพิมพ์ทีละฉบับ หรือติ๊กเลือกหลายฉบับแล้วกดปุ่มพิมพ์เอกสารที่เลือก ไม่ขึ้นกับแท็บที่กำลังเปิดอยู่</p>
       </section>
@@ -445,6 +493,10 @@
           </div>
         </div>
         <p class="hint">เลือกช่วงราคาเพื่อดูตารางแบบเต็มโดยไม่ต้องกรอกราคาน้ำมัน หรือพิมพ์คำค้นเพื่อไฮไลต์รายการที่ต้องการ (ตารางนี้สร้างจากข้อมูลในเอกสาร สำหรับดูค่าสะดวกๆ เท่านั้น ไม่ใช้พิมพ์)</p>
+        <div class="hl-toolbar">
+          <span class="hl-count" id="hlCountRoad">ติ๊กช่อง "ไฮไลต์" หน้ารายการที่ต้องการ เพื่อทำแถบสีในหน้าเอกสารที่พิมพ์</span>
+          <button class="btn secondary tiny" id="btnClearHlRoad" hidden>ล้างไฮไลต์ทั้งหมด</button>
+        </div>
         <div class="doc-title-block">
           <div class="t1">ตารางค่าดำเนินการและค่าเสื่อมราคา</div>
           <div class="t2">ราคาน้ำมันดีเซล ที่ อำเภอเมือง <span id="browseRangeLabel">-</span> บาท/ลิตร</div>
@@ -504,6 +556,10 @@
           </div>
         </div>
         <p class="hint">เลือกช่วงราคาเพื่อดูตารางแบบเต็มโดยไม่ต้องกรอกราคาน้ำมัน หรือพิมพ์คำค้นเพื่อไฮไลต์รายการที่ต้องการ (ตารางนี้สร้างจากข้อมูลในเอกสาร สำหรับดูค่าสะดวกๆ เท่านั้น ไม่ใช้พิมพ์)</p>
+        <div class="hl-toolbar">
+          <span class="hl-count" id="hlCountDirt">ติ๊กช่อง "ไฮไลต์" หน้ารายการที่ต้องการ เพื่อทำแถบสีในหน้าเอกสารที่พิมพ์</span>
+          <button class="btn secondary tiny" id="btnClearHlDirt" hidden>ล้างไฮไลต์ทั้งหมด</button>
+        </div>
         <div class="doc-title-block">
           <div class="t1">อัตราราคางานดิน (งานก่อสร้างชลประทาน)</div>
           <div class="t2">ราคาน้ำมันดีเซล ที่ อำเภอเมือง <span id="dirtBrowseRangeLabel">-</span> บาท/ลิตร</div>
@@ -521,10 +577,16 @@
       <img id="imgCoverRoad" src="cover-page.jpg" alt="หน้าแรกของเอกสาร ว 475">
     </figure>
     <figure class="print-page">
-      <img id="imgUsageRoad1" src="" alt="หน้าที่ใช้งาน ว 475 (1/2)">
+      <div class="page-img-wrap">
+        <img id="imgUsageRoad1" src="" alt="หน้าที่ใช้งาน ว 475 (1/2)">
+        <div class="hl-layer" id="hlRoad1"></div>
+      </div>
     </figure>
     <figure class="print-page">
-      <img id="imgUsageRoad2" src="" alt="หน้าที่ใช้งาน ว 475 (2/2)">
+      <div class="page-img-wrap">
+        <img id="imgUsageRoad2" src="" alt="หน้าที่ใช้งาน ว 475 (2/2)">
+        <div class="hl-layer" id="hlRoad2"></div>
+      </div>
     </figure>
   </section>
 
@@ -543,7 +605,10 @@
   <!-- No cover-letter page exists in this source document (excerpt starting at internal page 107) -->
   <section class="card print-only" id="printAreaDirt">
     <figure class="print-page">
-      <img id="imgUsageDirt" src="" alt="หน้าที่ใช้งาน อัตราราคางานดิน">
+      <div class="page-img-wrap">
+        <img id="imgUsageDirt" src="" alt="หน้าที่ใช้งาน อัตราราคางานดิน">
+        <div class="hl-layer" id="hlDirt1"></div>
+      </div>
     </figure>
   </section>
 
@@ -551,6 +616,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="data.js"></script>
+<script src="row-coords.js"></script>
 <script>
 (function(){
   const rows = DEPR_DATA.rows;
@@ -582,6 +648,18 @@
   const chkRoad = document.getElementById('chkRoad');
   const chkTransport = document.getElementById('chkTransport');
   const chkDirt = document.getElementById('chkDirt');
+  const hlLayers = {
+    road: [document.getElementById('hlRoad1'), document.getElementById('hlRoad2')],
+    dirt: [document.getElementById('hlDirt1')]
+  };
+  const hlCountRoad = document.getElementById('hlCountRoad');
+  const hlCountDirt = document.getElementById('hlCountDirt');
+  const btnClearHlRoad = document.getElementById('btnClearHlRoad');
+  const btnClearHlDirt = document.getElementById('btnClearHlDirt');
+
+  // Which template-row indices are highlighted, per document. Kept outside the table
+  // rendering so the selection survives switching brackets / re-rendering the table.
+  const hlSel = { road: new Set(), dirt: new Set() };
   const vehicleField = document.getElementById('vehicleField');
   const vehicleSelect = document.getElementById('vehicleSelect');
   const tabBtnRoad = document.getElementById('tabBtnRoad');
@@ -701,16 +779,18 @@
     rangeSelect.value = idx;
 
     let html = '<table class="dep-table"><thead>';
-    html += '<tr><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ลักษณะงาน</th><th rowspan="2">หน่วย</th>';
+    html += '<tr><th rowspan="2" class="hl-col">ไฮไลต์</th><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ลักษณะงาน</th><th rowspan="2">หน่วย</th>';
     html += '<th rowspan="2">ค่าดำเนินการ<br>บาท/หน่วย</th><th colspan="2">ค่าเสื่อมราคา (บาท)</th><th colspan="2">รวมค่างาน (บาท)</th></tr>';
     html += '<tr><th>ปกติ</th><th>ฝนชุก</th><th>ปกติ</th><th>ฝนชุก</th></tr></thead><tbody>';
 
     rows.forEach((r, i) => {
       const v = bracket.values[i];
+      const chk = hlCheckboxCell('road', i);
       if(r.header){
-        html += `<tr class="section-row" data-search="${(r.no+' '+r.item).toLowerCase()}"><td colspan="8">${r.no ? r.no+'. ' : ''}${escapeHtml(r.item)}</td></tr>`;
+        html += `<tr class="section-row" data-search="${(r.no+' '+r.item).toLowerCase()}">${chk}<td colspan="8">${r.no ? r.no+'. ' : ''}${escapeHtml(r.item)}</td></tr>`;
       } else {
         html += `<tr class="leaf-row" data-search="${(r.no+' '+r.item).toLowerCase()}">`;
+        html += chk;
         html += `<td>${r.no}</td>`;
         html += `<td class="name-cell">${escapeHtml(r.item)}</td>`;
         html += `<td>${r.unit}</td>`;
@@ -727,6 +807,11 @@
     applySearchFilter();
   }
 
+  function hlCheckboxCell(doc, i){
+    const on = hlSel[doc].has(i) ? ' checked' : '';
+    return `<td class="hl-col"><input type="checkbox" class="hl-chk" data-doc="${doc}" data-row="${i}"${on}></td>`;
+  }
+
   function escapeHtml(s){
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
@@ -739,16 +824,18 @@
     dirtRangeSelect.value = idx;
 
     let html = '<table class="dep-table"><thead>';
-    html += '<tr><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ลักษณะงาน</th><th rowspan="2">หน่วย</th>';
+    html += '<tr><th rowspan="2" class="hl-col">ไฮไลต์</th><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ลักษณะงาน</th><th rowspan="2">หน่วย</th>';
     html += '<th rowspan="2">ค่าใช้จ่าย<br>บาท/หน่วย</th><th colspan="2">ค่าเสื่อมราคา (บาท)</th><th colspan="2">อัตราราคา (บาท)</th></tr>';
     html += '<tr><th>ปกติ</th><th>ฝนตกชุก</th><th>ปกติ</th><th>ฝนตกชุก</th></tr></thead><tbody>';
 
     dirtRows.forEach((r, i) => {
       const v = bracket.values[i];
+      const chk = hlCheckboxCell('dirt', i);
       if(r.header){
-        html += `<tr class="section-row" data-search="${(r.no+' '+r.item).toLowerCase()}"><td colspan="8">${r.no ? r.no+'. ' : ''}${escapeHtml(r.item)}</td></tr>`;
+        html += `<tr class="section-row" data-search="${(r.no+' '+r.item).toLowerCase()}">${chk}<td colspan="8">${r.no ? r.no+'. ' : ''}${escapeHtml(r.item)}</td></tr>`;
       } else if(r.note){
         html += `<tr class="leaf-row" data-search="${(r.no+' '+r.item).toLowerCase()}">`;
+        html += chk;
         html += `<td>${r.no}</td>`;
         html += `<td class="name-cell">${escapeHtml(r.item)}</td>`;
         html += `<td>${r.unit}</td>`;
@@ -756,6 +843,7 @@
         html += `</tr>`;
       } else {
         html += `<tr class="leaf-row" data-search="${(r.no+' '+r.item).toLowerCase()}">`;
+        html += chk;
         html += `<td>${r.no}</td>`;
         html += `<td class="name-cell">${escapeHtml(r.item)}</td>`;
         html += `<td>${r.unit}</td>`;
@@ -771,6 +859,59 @@
     dirtTableHost.innerHTML = html;
     applyDirtSearchFilter();
   }
+
+  // ===== Print-page highlight overlay =====
+  // Draws a translucent band over each checked row, positioned from the pixel-measured
+  // fractions in row-coords.js. Bands are re-rendered whenever the selection changes;
+  // they don't depend on the price bracket since every bracket's page layout is identical.
+  function renderHighlights(doc){
+    const coords = ROW_COORDS[doc];
+    const layers = hlLayers[doc];
+    if(!coords || !layers) return;
+    const buckets = layers.map(() => '');
+    hlSel[doc].forEach(i => {
+      const r = coords.rows[i];
+      if(!r) return;
+      const li = r.page - 1;
+      if(li < 0 || li >= layers.length) return;
+      buckets[li] += `<div class="hl-band" style="left:${(coords.pageBox.left*100).toFixed(3)}%;width:${(coords.pageBox.width*100).toFixed(3)}%;top:${(r.top*100).toFixed(3)}%;height:${(r.height*100).toFixed(3)}%"></div>`;
+    });
+    layers.forEach((el, li) => { if(el) el.innerHTML = buckets[li]; });
+  }
+
+  function updateHlToolbar(doc){
+    const n = hlSel[doc].size;
+    const label = doc === 'road' ? hlCountRoad : hlCountDirt;
+    const btn = doc === 'road' ? btnClearHlRoad : btnClearHlDirt;
+    label.textContent = n
+      ? `ไฮไลต์ไว้ ${n} รายการ — จะปรากฏเป็นแถบสีในหน้าเอกสารที่พิมพ์`
+      : 'ติ๊กช่อง "ไฮไลต์" หน้ารายการที่ต้องการ เพื่อทำแถบสีในหน้าเอกสารที่พิมพ์';
+    btn.hidden = (n === 0);
+  }
+
+  function toggleHighlight(doc, i, on){
+    if(on) hlSel[doc].add(i); else hlSel[doc].delete(i);
+    renderHighlights(doc);
+    updateHlToolbar(doc);
+  }
+
+  function clearHighlights(doc){
+    hlSel[doc].clear();
+    const host = doc === 'road' ? tableHost : dirtTableHost;
+    host.querySelectorAll('.hl-chk').forEach(c => { c.checked = false; });
+    renderHighlights(doc);
+    updateHlToolbar(doc);
+  }
+
+  [tableHost, dirtTableHost].forEach(host => {
+    host.addEventListener('change', e => {
+      const c = e.target;
+      if(!c.classList || !c.classList.contains('hl-chk')) return;
+      toggleHighlight(c.dataset.doc, parseInt(c.dataset.row, 10), c.checked);
+    });
+  });
+  btnClearHlRoad.addEventListener('click', () => clearHighlights('road'));
+  btnClearHlDirt.addEventListener('click', () => clearHighlights('dirt'));
 
   function updateUsageDisplay(idx){
     // keep ALL 3 documents' print pages in sync at all times, regardless of which tab is
