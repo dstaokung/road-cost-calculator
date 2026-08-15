@@ -19,7 +19,7 @@
   }
   *{box-sizing:border-box;}
   html{
-    font-size:16pt;
+    font-size:12pt;
   }
   body{
     margin:0;
@@ -123,6 +123,13 @@
     font-weight:600;
     color:var(--gray);
   }
+  .print-label{
+    font-size:.88rem;
+    font-weight:600;
+    color:var(--gray);
+    margin-top:28px;
+    margin-bottom:6px;
+  }
   .field input[type=number], .field select{
     font-size:1.05rem;
     padding:9px 12px;
@@ -171,11 +178,41 @@
     color:var(--blue-dark);
   }
   .btn.secondary:hover{ background:var(--blue-light); }
+  .btn:disabled{
+    background:#e3e8ef;
+    border-color:#d0d8e4;
+    color:#98a2b3;
+    cursor:not-allowed;
+  }
+  .btn:disabled:hover{ background:#e3e8ef; }
   .btn-row{
     display:flex;
     gap:10px;
     flex-wrap:wrap;
     margin-top:14px;
+  }
+  #btnPrintBoth{
+    flex-basis:100%;
+  }
+  .print-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .print-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .print-item .btn{
+    flex:1;
+  }
+  .print-chk{
+    width:17px;
+    height:17px;
+    flex:none;
+    cursor:pointer;
+    accent-color:var(--blue);
   }
   table.dep-table{
     width:100%;
@@ -304,19 +341,21 @@
       padding:0;
       margin:0;
     }
-    #printAreaRoad, #printAreaTransport{ display:none; }
-    body.print-road #printAreaRoad{ display:block; }
-    body.print-transport #printAreaTransport{ display:block; }
-    body.print-both #printAreaRoad, body.print-both #printAreaTransport{ display:block; }
-    #printAreaRoad > figure.print-page, #printAreaTransport > figure.print-page{
+    /* additive classes so any combination of documents can be printed in one job */
+    #printAreaRoad, #printAreaTransport, #printAreaDirt{ display:none; }
+    body.sel-road #printAreaRoad{ display:block; }
+    body.sel-transport #printAreaTransport{ display:block; }
+    body.sel-dirt #printAreaDirt{ display:block; }
+    #printAreaRoad > figure.print-page, #printAreaTransport > figure.print-page, #printAreaDirt > figure.print-page{
       margin:0;
       page-break-after:always;
     }
     #printAreaRoad > figure.print-page.last-in-job,
-    #printAreaTransport > figure.print-page.last-in-job{
+    #printAreaTransport > figure.print-page.last-in-job,
+    #printAreaDirt > figure.print-page.last-in-job{
       page-break-after:auto;
     }
-    #printAreaRoad > figure.print-page img, #printAreaTransport > figure.print-page img{ border:none; border-radius:0; width:100%; }
+    #printAreaRoad > figure.print-page img, #printAreaTransport > figure.print-page img, #printAreaDirt > figure.print-page img{ border:none; border-radius:0; width:100%; }
     table.dep-table{ font-size:11px; }
     table.dep-table thead th{ background:#dbe6f5 !important; color:#000 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     tr.section-row td{ background:#eef3fa !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -335,6 +374,7 @@
   <div class="tabbar no-print">
     <button class="tab-btn active" id="tabBtnRoad" data-tab="road">ค่าดำเนินการและค่าเสื่อมราคา (ว 475)</button>
     <button class="tab-btn" id="tabBtnTransport" data-tab="transport">ค่าขนส่งวัสดุก่อสร้าง (ว 477)</button>
+    <button class="tab-btn" id="tabBtnDirt" data-tab="dirt">อัตราราคางานดิน</button>
   </div>
 
   <div class="layout">
@@ -358,12 +398,25 @@
           </div>
           <div id="matchBadge" class="result-badge">กรอกราคาน้ำมันเพื่อค้นหาตาราง</div>
         </div>
-        <div class="btn-row">
-          <button class="btn" id="btnPrintRoad">พิมพ์เอกสาร ค่าดำเนินการและค่าเสื่อมราคา</button>
-          <button class="btn" id="btnPrintTransport">พิมพ์เอกสาร ค่าขนส่ง</button>
-          <button class="btn secondary" id="btnPrintBoth">พิมพ์ทั้ง 2 อย่าง</button>
+        <div class="print-label">พิมพ์เอกสาร</div>
+        <div class="print-list">
+          <div class="print-item">
+            <input type="checkbox" id="chkRoad" class="print-chk" checked>
+            <button class="btn" id="btnPrintRoad">ค่าดำเนินการและค่าเสื่อมราคา</button>
+          </div>
+          <div class="print-item">
+            <input type="checkbox" id="chkTransport" class="print-chk" checked>
+            <button class="btn" id="btnPrintTransport">ค่าขนส่ง</button>
+          </div>
+          <div class="print-item">
+            <input type="checkbox" id="chkDirt" class="print-chk" checked>
+            <button class="btn" id="btnPrintDirt">อัตราราคางานดิน</button>
+          </div>
         </div>
-        <p class="hint" id="searchHint">ระบบจะเลือกช่วงราคาน้ำมัน (step ละ 1.00 บาท) ที่ครอบคลุมราคาที่กรอก แล้วโหลดหน้าเอกสารจริง (ไฟล์ต้นฉบับ) ของทั้ง 2 เอกสารไว้ให้พร้อมพิมพ์ — เลือกพิมพ์ทีละเอกสาร หรือพิมพ์รวมกันก็ได้ ไม่ขึ้นกับแท็บที่กำลังเปิดอยู่</p>
+        <div class="btn-row">
+          <button class="btn secondary" id="btnPrintBoth">พิมพ์เอกสารที่เลือก (3 อย่าง)</button>
+        </div>
+        <p class="hint" id="searchHint">ระบบจะเลือกช่วงราคาน้ำมัน (step ละ 1.00 บาท) ที่ครอบคลุมราคาที่กรอก แล้วโหลดหน้าเอกสารจริง (ไฟล์ต้นฉบับ) ของทั้ง 3 เอกสารไว้ให้พร้อมพิมพ์ — กดปุ่มชื่อเอกสารเพื่อพิมพ์ทีละฉบับ หรือติ๊กเลือกหลายฉบับแล้วกดปุ่มพิมพ์เอกสารที่เลือก ไม่ขึ้นกับแท็บที่กำลังเปิดอยู่</p>
       </section>
     </div>
 
@@ -429,6 +482,27 @@
         <p class="hint"><strong>รถบรรทุก 6 ล้อ</strong> — ขนส่งบนทางภูเขาหรือทางลาดชันมาก, ในเขตชุมชนที่จราจรหนาแน่น (เช่น กรุงเทพฯ เขตเทศบาลเมือง), งานขนาดเล็กหรือระยะเวลาดำเนินการสั้น, พื้นที่ก่อสร้างคับแคบ</p>
       </section>
 
+      <!-- Tab 3: browsable HTML data view (from data.js) for the earthwork/irrigation document, same pattern as tab 1 -->
+      <section class="card no-print" id="dirtBrowsePanel" hidden>
+        <h2>เรียกดูค่าต่างๆ ทั้งหมด (45 ช่วงราคาน้ำมัน)</h2>
+        <div class="browse-row">
+          <div class="field">
+            <label for="dirtRangeSelect">เลือกช่วงราคาน้ำมันโดยตรง</label>
+            <select id="dirtRangeSelect"></select>
+          </div>
+          <div class="field">
+            <label for="dirtSearchBox">ค้นหารายการงาน</label>
+            <input type="text" id="dirtSearchBox" class="search-box" style="min-width:280px;margin:0;" placeholder="พิมพ์ชื่องาน เช่น ขุดดิน, บดอัด, ลูกรัง">
+          </div>
+        </div>
+        <p class="hint">เลือกช่วงราคาเพื่อดูตารางแบบเต็มโดยไม่ต้องกรอกราคาน้ำมัน หรือพิมพ์คำค้นเพื่อไฮไลต์รายการที่ต้องการ (ตารางนี้สร้างจากข้อมูลในเอกสาร สำหรับดูค่าสะดวกๆ เท่านั้น ไม่ใช้พิมพ์)</p>
+        <div class="doc-title-block">
+          <div class="t1">อัตราราคางานดิน (งานก่อสร้างชลประทาน)</div>
+          <div class="t2">ราคาน้ำมันดีเซล ที่ อำเภอเมือง <span id="dirtBrowseRangeLabel">-</span> บาท/ลิตร</div>
+        </div>
+        <div id="dirtTableHost"></div>
+      </section>
+
     </div>
 
   </div>
@@ -458,6 +532,13 @@
     </figure>
   </section>
 
+  <!-- No cover-letter page exists in this source document (excerpt starting at internal page 107) -->
+  <section class="card print-only" id="printAreaDirt">
+    <figure class="print-page">
+      <img id="imgUsageDirt" src="" alt="หน้าที่ใช้งาน อัตราราคางานดิน">
+    </figure>
+  </section>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -466,6 +547,8 @@
 (function(){
   const rows = DEPR_DATA.rows;
   const prices = DEPR_DATA.prices;
+  const dirtRows = DIRT_DATA.rows;
+  const dirtPrices = DIRT_DATA.prices;
 
   const oilPriceEl = document.getElementById('oilPrice');
   const matchBadge = document.getElementById('matchBadge');
@@ -473,20 +556,31 @@
   const tableHost = document.getElementById('tableHost');
   const rangeSelect = document.getElementById('rangeSelect');
   const searchBox = document.getElementById('searchBox');
+  const dirtBrowseRangeLabel = document.getElementById('dirtBrowseRangeLabel');
+  const dirtTableHost = document.getElementById('dirtTableHost');
+  const dirtRangeSelect = document.getElementById('dirtRangeSelect');
+  const dirtSearchBox = document.getElementById('dirtSearchBox');
   const imgCoverRoad = document.getElementById('imgCoverRoad');
   const imgUsageRoad1 = document.getElementById('imgUsageRoad1');
   const imgUsageRoad2 = document.getElementById('imgUsageRoad2');
   const imgCoverTransport = document.getElementById('imgCoverTransport');
   const imgUsageTransport1 = document.getElementById('imgUsageTransport1');
   const imgUsageTransport2 = document.getElementById('imgUsageTransport2');
+  const imgUsageDirt = document.getElementById('imgUsageDirt');
   const btnPrintRoad = document.getElementById('btnPrintRoad');
   const btnPrintTransport = document.getElementById('btnPrintTransport');
+  const btnPrintDirt = document.getElementById('btnPrintDirt');
   const btnPrintBoth = document.getElementById('btnPrintBoth');
+  const chkRoad = document.getElementById('chkRoad');
+  const chkTransport = document.getElementById('chkTransport');
+  const chkDirt = document.getElementById('chkDirt');
   const vehicleField = document.getElementById('vehicleField');
   const vehicleSelect = document.getElementById('vehicleSelect');
   const tabBtnRoad = document.getElementById('tabBtnRoad');
   const tabBtnTransport = document.getElementById('tabBtnTransport');
+  const tabBtnDirt = document.getElementById('tabBtnDirt');
   const roadBrowsePanel = document.getElementById('roadBrowsePanel');
+  const dirtBrowsePanel = document.getElementById('dirtBrowsePanel');
   const transportInfoPanel = document.getElementById('transportInfoPanel');
   const pageTitle = document.getElementById('pageTitle');
   const pageSubtitle = document.getElementById('pageSubtitle');
@@ -507,6 +601,12 @@
       subtitle: 'งานก่อสร้างทาง สะพาน ท่อเหลี่ยม และชลประทาน — อ้างอิงหนังสือกรมบัญชีกลาง ด่วนที่สุด ที่ กค 0433.2/ว 477 ลงวันที่ 26 มิถุนายน 2569',
       searchTitle: 'ค้นหาตารางค่าขนส่งจากราคาน้ำมันดีเซล',
       hint: 'เลือกชนิดรถบรรทุกและกรอกราคาน้ำมัน ระบบจะเลือกช่วงราคา (step ละ 1.00 บาท) และโหลดหน้าเอกสารจริงของรถชนิดนั้นไว้ให้พร้อมพิมพ์'
+    },
+    dirt: {
+      title: 'อัตราราคางานดิน',
+      subtitle: 'งานก่อสร้างชลประทาน — อัตราราคางานดินตามระดับราคาน้ำมันดีเซล',
+      searchTitle: 'ค้นหาตารางจากราคาน้ำมันดีเซล',
+      hint: 'ระบบจะเลือกช่วงราคาน้ำมัน (step ละ 1.00 บาท) ที่ครอบคลุมราคาที่กรอก แล้วโหลดหน้าเอกสารจริง (ไฟล์ต้นฉบับ) ที่ตรงกันไว้ให้พร้อมพิมพ์ (เอกสารนี้ไม่มีหน้าปกแนบมา จึงพิมพ์เฉพาะหน้าที่ใช้งาน)'
     }
   };
 
@@ -533,12 +633,27 @@
     imgUsageTransport2.src = transportPageFile(p2);
   }
 
-  // populate dropdown
+  // ===== DIRT DOC (อัตราราคางานดิน): 1 page per bracket, page number = bracket index + 1.
+  // No cover-letter page exists in the source file (excerpt starting at internal page 107).
+  function dirtPageFile(pageNum){
+    return 'pages_dirt/p' + String(pageNum).padStart(3,'0') + '.png';
+  }
+  function loadUsagePageDirt(idx){
+    imgUsageDirt.src = dirtPageFile(idx + 1);
+  }
+
+  // populate dropdowns
   prices.forEach((p, idx) => {
     const opt = document.createElement('option');
     opt.value = idx;
     opt.textContent = p.label + ' บาท/ลิตร';
     rangeSelect.appendChild(opt);
+  });
+  dirtPrices.forEach((p, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = p.label + ' บาท/ลิตร';
+    dirtRangeSelect.appendChild(opt);
   });
 
   // Manual formatting (no Intl/toLocaleString) so digits are ALWAYS plain 0-9.
@@ -608,13 +723,55 @@
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  // อัตราราคางานดิน table — same 5-numeric-column shape as renderTable() above, plus a `note`
+  // field on one row (ค่าระเบิดหิน) that has no numbers in the source doc, just a reference note.
+  function renderDirtTable(idx){
+    const bracket = dirtPrices[idx];
+    dirtBrowseRangeLabel.textContent = bracket.label;
+    dirtRangeSelect.value = idx;
+
+    let html = '<table class="dep-table"><thead>';
+    html += '<tr><th rowspan="2">ลำดับ</th><th rowspan="2" class="name-cell">ลักษณะงาน</th><th rowspan="2">หน่วย</th>';
+    html += '<th rowspan="2">ค่าใช้จ่าย<br>บาท/หน่วย</th><th colspan="2">ค่าเสื่อมราคา (บาท)</th><th colspan="2">อัตราราคา (บาท)</th></tr>';
+    html += '<tr><th>ปกติ</th><th>ฝนตกชุก</th><th>ปกติ</th><th>ฝนตกชุก</th></tr></thead><tbody>';
+
+    dirtRows.forEach((r, i) => {
+      const v = bracket.values[i];
+      if(r.header){
+        html += `<tr class="section-row" data-search="${(r.no+' '+r.item).toLowerCase()}"><td colspan="8">${r.no ? r.no+'. ' : ''}${escapeHtml(r.item)}</td></tr>`;
+      } else if(r.note){
+        html += `<tr class="leaf-row" data-search="${(r.no+' '+r.item).toLowerCase()}">`;
+        html += `<td>${r.no}</td>`;
+        html += `<td class="name-cell">${escapeHtml(r.item)}</td>`;
+        html += `<td>${r.unit}</td>`;
+        html += `<td class="hint" colspan="5" style="padding:6px 8px">${escapeHtml(r.note)}</td>`;
+        html += `</tr>`;
+      } else {
+        html += `<tr class="leaf-row" data-search="${(r.no+' '+r.item).toLowerCase()}">`;
+        html += `<td>${r.no}</td>`;
+        html += `<td class="name-cell">${escapeHtml(r.item)}</td>`;
+        html += `<td>${r.unit}</td>`;
+        html += `<td class="num">${fmtCost(v[0])}</td>`;
+        html += `<td class="num">${fmt(v[1])}</td>`;
+        html += `<td class="num">${fmt(v[2])}</td>`;
+        html += `<td class="num">${fmt(v[3])}</td>`;
+        html += `<td class="num">${fmt(v[4])}</td>`;
+        html += `</tr>`;
+      }
+    });
+    html += '</tbody></table>';
+    dirtTableHost.innerHTML = html;
+    applyDirtSearchFilter();
+  }
+
   function updateUsageDisplay(idx){
-    // keep BOTH documents' print pages in sync at all times, regardless of which tab is
-    // showing on screen, so any of the 3 print buttons work no matter which tab is active
+    // keep ALL 3 documents' print pages in sync at all times, regardless of which tab is
+    // showing on screen, so any of the print buttons work no matter which tab is active
     imgCoverRoad.src = 'cover-page.jpg';
     loadUsagePagesRoad(idx);
     imgCoverTransport.src = 'cover-page-477.jpg';
     loadUsagePagesTransport(idx, parseInt(vehicleSelect.value, 10));
+    loadUsagePageDirt(idx);
   }
 
   function updateFromOilPrice(){
@@ -633,9 +790,12 @@
     if(activeTab === 'road'){
       matchBadge.textContent = `ใช้เอกสารช่วงราคา ${prices[idx].label} บาท/ลิตร`;
       renderTable(idx);
-    } else {
+    } else if(activeTab === 'transport'){
       const vehName = vehicleSelect.options[vehicleSelect.selectedIndex].text;
       matchBadge.textContent = `ใช้เอกสารช่วงราคา ${prices[idx].label} บาท/ลิตร — ${vehName}`;
+    } else {
+      matchBadge.textContent = `ใช้เอกสารช่วงราคา ${dirtPrices[idx].label} บาท/ลิตร`;
+      renderDirtTable(idx);
     }
     matchBadge.classList.remove('warn');
     updateUsageDisplay(idx);
@@ -650,14 +810,31 @@
     searchHint.textContent = t.hint;
     tabBtnRoad.classList.toggle('active', tab === 'road');
     tabBtnTransport.classList.toggle('active', tab === 'transport');
+    tabBtnDirt.classList.toggle('active', tab === 'dirt');
     roadBrowsePanel.hidden = (tab !== 'road');
     transportInfoPanel.hidden = (tab !== 'transport');
+    dirtBrowsePanel.hidden = (tab !== 'dirt');
     updateFromOilPrice();
   }
 
   function applySearchFilter(){
     const q = searchBox.value.trim().toLowerCase();
     const trs = tableHost.querySelectorAll('tr[data-search]');
+    trs.forEach(tr => {
+      if(!q){ tr.style.outline=''; tr.style.background=''; return; }
+      if(tr.dataset.search.includes(q)){
+        tr.style.outline = '2px solid #b8860b';
+        tr.style.background = '#fff6e0';
+      } else {
+        tr.style.outline='';
+        tr.style.background='';
+      }
+    });
+  }
+
+  function applyDirtSearchFilter(){
+    const q = dirtSearchBox.value.trim().toLowerCase();
+    const trs = dirtTableHost.querySelectorAll('tr[data-search]');
     trs.forEach(tr => {
       if(!q){ tr.style.outline=''; tr.style.background=''; return; }
       if(tr.dataset.search.includes(q)){
@@ -808,39 +985,57 @@
   vehicleSelect.addEventListener('change', updateFromOilPrice);
   rangeSelect.addEventListener('change', () => renderTable(parseInt(rangeSelect.value,10)));
   searchBox.addEventListener('input', applySearchFilter);
+  dirtRangeSelect.addEventListener('change', () => renderDirtTable(parseInt(dirtRangeSelect.value,10)));
+  dirtSearchBox.addEventListener('input', applyDirtSearchFilter);
+
+  // Documents are always printed in this order (matches DOM order of the print sections)
+  const PRINT_AREA = { road: '#printAreaRoad', transport: '#printAreaTransport', dirt: '#printAreaDirt' };
+  const PRINT_ORDER = ['road', 'transport', 'dirt'];
 
   // Mark whichever figure is the true last page of a given print job so it doesn't force
   // a trailing blank page (page-break-after is set to "always" on every figure by default).
-  function preparePrintBreaks(mode){
-    document.querySelectorAll('#printAreaRoad .print-page, #printAreaTransport .print-page')
+  function preparePrintBreaks(modes){
+    document.querySelectorAll('#printAreaRoad .print-page, #printAreaTransport .print-page, #printAreaDirt .print-page')
       .forEach(f => f.classList.remove('last-in-job'));
-    let lastFig;
-    if(mode === 'road'){
-      lastFig = document.querySelector('#printAreaRoad .print-page:last-child');
-    } else if(mode === 'transport'){
-      lastFig = document.querySelector('#printAreaTransport .print-page:last-child');
-    } else {
-      lastFig = document.querySelector('#printAreaTransport .print-page:last-child');
-    }
+    const lastMode = PRINT_ORDER.filter(m => modes.includes(m)).pop();
+    if(!lastMode) return;
+    const lastFig = document.querySelector(PRINT_AREA[lastMode] + ' .print-page:last-child');
     if(lastFig) lastFig.classList.add('last-in-job');
   }
 
-  function doPrint(mode){
-    preparePrintBreaks(mode);
-    document.body.className = 'print-' + mode;
+  function doPrint(modes){
+    if(!modes.length) return;
+    preparePrintBreaks(modes);
+    document.body.className = modes.map(m => 'sel-' + m).join(' ');
     window.print();
   }
   window.addEventListener('afterprint', () => { document.body.className = ''; });
 
-  btnPrintRoad.addEventListener('click', () => doPrint('road'));
-  btnPrintTransport.addEventListener('click', () => doPrint('transport'));
-  btnPrintBoth.addEventListener('click', () => doPrint('both'));
+  function selectedModes(){
+    return PRINT_ORDER.filter(m => ({road: chkRoad, transport: chkTransport, dirt: chkDirt})[m].checked);
+  }
+
+  function updatePrintSelectionLabel(){
+    const n = selectedModes().length;
+    btnPrintBoth.textContent = n ? `พิมพ์เอกสารที่เลือก (${n} อย่าง)` : 'ยังไม่ได้เลือกเอกสาร';
+    btnPrintBoth.disabled = (n === 0);
+  }
+
+  btnPrintRoad.addEventListener('click', () => doPrint(['road']));
+  btnPrintTransport.addEventListener('click', () => doPrint(['transport']));
+  btnPrintDirt.addEventListener('click', () => doPrint(['dirt']));
+  btnPrintBoth.addEventListener('click', () => doPrint(selectedModes()));
+
+  [chkRoad, chkTransport, chkDirt].forEach(c => c.addEventListener('change', updatePrintSelectionLabel));
+  updatePrintSelectionLabel();
 
   tabBtnRoad.addEventListener('click', () => switchTab('road'));
   tabBtnTransport.addEventListener('click', () => switchTab('transport'));
+  tabBtnDirt.addEventListener('click', () => switchTab('dirt'));
 
-  // initial render: first bracket (25.00 - 25.99) as sensible defaults for both panels
+  // initial render: first bracket (25.00 - 25.99) as sensible defaults for all panels
   renderTable(0);
+  renderDirtTable(0);
   updateUsageDisplay(0);
 })();
 </script>
