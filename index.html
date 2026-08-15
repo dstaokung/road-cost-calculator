@@ -536,13 +536,17 @@
     rangeSelect.appendChild(opt);
   });
 
+  // "th-TH-u-nu-latn" = Thai locale formatting (comma thousands separator, period decimal)
+  // but forced to Arabic (0-9) digits — plain "th-TH" renders Thai digits (๐-๙) on some
+  // browsers/OS depending on their ICU data, which is why the table looked different on
+  // some machines.
   function fmt(n){
     if(n === null || n === undefined) return '';
-    return n.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
+    return n.toLocaleString('th-TH-u-nu-latn', {minimumFractionDigits:2, maximumFractionDigits:2});
   }
   function fmtCost(n){
     if(n === null || n === undefined) return '';
-    if(Number.isInteger(n) && n >= 1000) return n.toLocaleString('th-TH');
+    if(Number.isInteger(n) && n >= 1000) return n.toLocaleString('th-TH-u-nu-latn');
     return fmt(n);
   }
 
