@@ -23,7 +23,12 @@
   }
   body{
     margin:0;
-    font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai",Tahoma,sans-serif;
+    /* "TH Sarabun New"/"TH SarabunPSK" intentionally NOT listed: these are local fonts
+       common on Thai government PCs, and their digit glyphs auto-swap to Thai numerals
+       (๐-๙) via the font's OpenType locale substitution when lang="th" is set — even
+       though the underlying character is a plain "0"-"9". Using the Google-hosted
+       "Sarabun" web font (loaded above) avoids that swap and looks the same either way. */
+    font-family:"Sarabun","Noto Sans Thai",Tahoma,sans-serif;
     background:var(--bg);
     color:#1c1f26;
     line-height:1.5;
